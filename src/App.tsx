@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Typewriter from './components/typewriter';
 import { ArticleRegex, DivRegex, SectionRegex, CHALLENGE_URL } from './lib/constants';
 
 async function parseFlag() {
@@ -9,7 +10,6 @@ async function parseFlag() {
   const parser = new DOMParser();
   const doc = parser.parseFromString(HTML, 'text/html');
 
-  console.log(doc)
   doc.querySelectorAll('section')
     .forEach((section) => {
       const dataIdValue = section.attributes['data-id'].value;
@@ -51,8 +51,10 @@ function App() {
   const [flag, setFlag] = useState('');
 
   useEffect(() => {
-    const word = parseFlag();
-    setFlag(word);
+    (async () => {
+      const word = await parseFlag();
+      setFlag(word);
+    })();
   }, []);
 
   return (
@@ -61,7 +63,7 @@ function App() {
       {flag === '' ? (
         <p>Loading...</p>
       ) : (
-        <p>{flag}</p>
+        <Typewriter flag={flag} />
       )}
     </>
   );
