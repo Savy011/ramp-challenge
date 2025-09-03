@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { ArticleRegex, DivRegex, SectionRegex, CHALLENGE_URL } from './lib/constants';
-import './App.css';
 
 async function parseFlag() {
   let FlagBuilder: Array<string> = [];
@@ -50,6 +49,7 @@ async function parseFlag() {
 
 function App() {
   const [flag, setFlag] = useState('');
+
   useEffect(() => {
     const word = parseFlag();
     setFlag(word);
