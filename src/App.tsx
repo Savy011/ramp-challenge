@@ -54,7 +54,7 @@ function App() {
 
   return (
     <>
-      <h1>Ramp</h1>
+      <h1>Ramp Challenge</h1>
       {flag === '' ? (
         <p>Loading...</p>
       ) : (
