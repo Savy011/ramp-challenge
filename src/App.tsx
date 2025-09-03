@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import Typewriter from './components/typewriter';
-import { ArticleRegex, DivRegex, SectionRegex, CHALLENGE_URL } from './lib/constants';
+import { ArticleRegex, CHALLENGE_URL, DivRegex, SectionRegex } from './lib/constants';
 
 async function parseFlag() {
-  let FlagBuilder: Array<string> = [];
+  const FlagBuilder: Array<string> = [];
 
   const res = await fetch(CHALLENGE_URL);
   const HTML = await res.text();
@@ -26,13 +26,13 @@ async function parseFlag() {
 
                   if (DivRegex.test(dataTagValue)) {
                     div.querySelectorAll('b')
-                      .forEach(b => {
+                      .forEach((b) => {
                         if (b.classList.contains('ref')) {
-                          const value = b.attributes['value'].value;
+                          const value = b.attributes.value.value;
 
                           FlagBuilder.push(value);
                         }
-                      })
+                      });
                   };
                 });
             }
@@ -60,11 +60,13 @@ function App() {
   return (
     <>
       <h1>Ramp Challenge</h1>
-      {flag === '' ? (
-        <p>Loading...</p>
-      ) : (
-        <Typewriter flag={flag} />
-      )}
+      {flag === ''
+        ? (
+            <p>Loading...</p>
+          )
+        : (
+            <Typewriter flag={flag} />
+          )}
     </>
   );
 }
