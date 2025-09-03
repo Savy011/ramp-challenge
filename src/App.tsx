@@ -1,41 +1,67 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
+import { useEffect, useState } from 'react';
+import { HTML } from './lib/challenge';
+import { ArticleRegex, DivRegex, SectionRegex } from './lib/constants';
 import './App.css';
-import viteLogo from '/vite.svg';
+
+function parseFlag() {
+  let FlagBuilder: Array<string> = [];
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(HTML, 'text/html');
+
+  doc.querySelectorAll('section')
+    .forEach((section) => {
+      const dataIdValue = section.attributes['data-id'].value;
+
+      if (SectionRegex.test(dataIdValue)) {
+        section.querySelectorAll('article')
+          .forEach((article) => {
+            const dataClassValue = article.attributes['data-class'].value;
+
+            if (ArticleRegex.test(dataClassValue)) {
+              article.querySelectorAll('div')
+                .forEach((div) => {
+                  const dataTagValue = div.attributes['data-tag'].value;
+
+                  if (DivRegex.test(dataTagValue)) {
+                    div.querySelectorAll('b')
+                      .forEach(b => {
+                        if (b.classList.contains('ref')) {
+                          const value = b.attributes['value'].value;
+
+                          FlagBuilder.push(value);
+                        }
+                      })
+                  };
+                });
+            }
+          });
+      }
+    });
+
+  const flagUrl = FlagBuilder.join('');
+  const word = fetch(flagUrl).then(res => res.text()) 
+
+  return word;
+}
 
 function App() {
-    const [count, setCount] = useState(0);
+  const [flag, setFlag] = useState('');
+  useEffect(() => {
+    const word = parseFlag();
+    setFlag(word);
+  }, []);
 
-    return (
-        <>
-            <div>
-                <a href="https://vite.dev" target="_blank">
-                    <img src={viteLogo} className="logo" alt="Vite logo" />
-                </a>
-                <a href="https://react.dev" target="_blank">
-                    <img src={reactLogo} className="logo react" alt="React logo" />
-                </a>
-            </div>
-            <h1>Vite + React</h1>
-            <div className="card">
-                <button onClick={() => setCount(count => count + 1)}>
-                    count is
-                    {' '}
-                    {count}
-                </button>
-                <p>
-                    Edit
-                    {' '}
-                    <code>src/App.tsx</code>
-                    {' '}
-                    and save to test HMR
-                </p>
-            </div>
-            <p className="read-the-docs">
-                Click on the Vite and React logos to learn more
-            </p>
-        </>
-    );
+  return (
+    <>
+      <h1>Ramp</h1>
+      {flag === '' ? (
+        <p>Loading...</p>
+      ) : (
+        <p>{flag}</p>
+      )}
+    </>
+  );
 }
 
 export default App;
