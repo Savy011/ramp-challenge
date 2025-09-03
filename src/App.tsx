@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
-import { HTML } from './lib/challenge';
-import { ArticleRegex, DivRegex, SectionRegex } from './lib/constants';
+import { ArticleRegex, DivRegex, SectionRegex, CHALLENGE_URL } from './lib/constants';
 import './App.css';
 
-function parseFlag() {
+async function parseFlag() {
   let FlagBuilder: Array<string> = [];
 
+  const res = await fetch(CHALLENGE_URL);
+  const HTML = await res.text();
   const parser = new DOMParser();
   const doc = parser.parseFromString(HTML, 'text/html');
 
+  console.log(doc)
   doc.querySelectorAll('section')
     .forEach((section) => {
       const dataIdValue = section.attributes['data-id'].value;
@@ -40,9 +42,10 @@ function parseFlag() {
     });
 
   const flagUrl = FlagBuilder.join('');
-  const word = fetch(flagUrl).then(res => res.text()) 
+  const resFlag = await fetch(flagUrl);
+  const flag = await resFlag.text();
 
-  return word;
+  return flag;
 }
 
 function App() {
